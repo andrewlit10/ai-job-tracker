@@ -35,7 +35,10 @@ export default function JobsPage() {
     setTitle("");
     setStatus("saved");
   }
-
+  function deleteJob(id: string) {
+    const updatedJobs = jobs.filter((job) => job.id !== id);
+    setJobs(updatedJobs);
+  }
   return (
     <main>
       <form onSubmit={addNewJob}>
@@ -67,6 +70,7 @@ export default function JobsPage() {
           <h2>{job.company}</h2>
           <p>{job.title}</p>
           <p>{job.status}</p>
+          <button onClick={() => deleteJob(job.id)}>Delete</button>
         </div>
       ))}
     </main>
