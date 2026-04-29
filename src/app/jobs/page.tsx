@@ -39,6 +39,16 @@ export default function JobsPage() {
     const updatedJobs = jobs.filter((job) => job.id !== id);
     setJobs(updatedJobs);
   }
+
+  function updateJobStatus(id: string, newStatus: JobStatus) {
+    const updatedJobs = jobs.map((job) => {
+      if (job.id === id) {
+        return { ...job, status: newStatus };
+      }
+      return job;
+    });
+    setJobs(updatedJobs);
+  }
   return (
     <main>
       <form onSubmit={addNewJob}>
@@ -70,6 +80,18 @@ export default function JobsPage() {
           <h2>{job.company}</h2>
           <p>{job.title}</p>
           <p>{job.status}</p>
+          <select
+            value={job.status}
+            onChange={(e) =>
+              updateJobStatus(job.id, e.target.value as JobStatus)
+            }
+          >
+            <option value="saved">Saved</option>
+            <option value="applied">Applied</option>
+            <option value="interviewing">Interviewing</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">Rejected</option>
+          </select>
           <button onClick={() => deleteJob(job.id)}>Delete</button>
         </div>
       ))}
