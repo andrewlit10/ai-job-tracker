@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { mockJobs } from "@/lib/mockJobs";
 import { JobStatus } from "@/types/job";
+import Link from "next/link";
 
 export default function JobsPage() {
   const [query, setQuery] = useState("");
@@ -77,9 +78,11 @@ export default function JobsPage() {
       <input value={query} onChange={(e) => setQuery(e.target.value)} />
       {filteredJobs.map((job) => (
         <div key={job.id}>
-          <h2>{job.company}</h2>
-          <p>{job.title}</p>
-          <p>{job.status}</p>
+          <Link href={`/jobs/${job.id}`}>
+            <h2>{job.company}</h2>
+            <p>{job.title}</p>
+            <p>{job.status}</p>
+          </Link>
           <select
             value={job.status}
             onChange={(e) =>
