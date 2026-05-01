@@ -16,9 +16,18 @@ export default async function JobDetailPage({ params }: Props) {
   }
   return (
     <main>
-      <h1>{job.company}</h1>
-      <p>{job.title}</p>
-      <p>{job.status}</p>
+      <section>
+        <h1>{job.company}</h1>
+        <p>{job.title}</p>
+        <p>{job.status}</p>
+      </section>
+      <section>
+        <p>{job.description || "No description added yet."}</p>
+      </section>
+      <section>
+        <p>{job.location || "No location added yet."}</p>
+        <p>{job.createdAt}</p>
+      </section>
     </main>
   );
 }
