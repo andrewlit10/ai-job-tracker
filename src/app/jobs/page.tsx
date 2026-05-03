@@ -1,16 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mockJobs } from "@/lib/mockJobs";
 import { JobStatus } from "@/types/job";
+import type { Job } from "@/types/job";
 import Link from "next/link";
 
 export default function JobsPage() {
   const [query, setQuery] = useState("");
-  const [jobs, setJobs] = useState(mockJobs);
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState<JobStatus>("saved");
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
+  useEffect(() => {
+    const savedJobs = localStorage.getItem("jobs");
+
+    if (savedJobs) {
+      setJobs(JSON.parse(savedJobs));
+    } else {
+      setJobs(mockJobs);
+    }
+    setHasLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoaded) return;
+    localStorage.setItem("jobs", JSON.stringify(jobs));
+  }, [jobs, hasLoaded]);
   const normalizedQuery = query.toLowerCase().trim();
   const filteredJobs = jobs.filter(
     (job) =>
@@ -49,6 +66,10 @@ export default function JobsPage() {
       return job;
     });
     setJobs(updatedJobs);
+  }
+
+  if (!hasLoaded) {
+    return <main>Loading...</main>;
   }
   return (
     <main>
