@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { mockJobs } from "@/lib/mockJobs";
+import { formatStatus } from "@/lib/formatters";
 import { JobStatus } from "@/types/job";
 import type { Job } from "@/types/job";
+
 import Link from "next/link";
 
 export default function JobsPage() {
@@ -104,7 +106,7 @@ export default function JobsPage() {
           <Link href={`/jobs/${job.id}`}>
             <h2>{job.company}</h2>
             <p>{job.title}</p>
-            <p>{job.status}</p>
+            <p>{formatStatus(job.status)}</p>
           </Link>
           <select
             value={job.status}
