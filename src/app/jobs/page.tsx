@@ -54,6 +54,8 @@ export default function JobsPage() {
     setStatus("saved");
   }
   function deleteJob(id: string) {
+    const shouldDelete = confirm("Are you sure you want to delete this job?");
+    if (!shouldDelete) return;
     const updatedJobs = jobs.filter((job) => job.id !== id);
     setJobs(updatedJobs);
   }
