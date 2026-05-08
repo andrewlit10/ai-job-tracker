@@ -3,7 +3,11 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Job } from "@/types/job";
 import { mockJobs } from "@/lib/mockJobs";
-import { formatDate, formatStatus } from "@/lib/formatters";
+import {
+  formatDate,
+  formatStatus,
+  getStatusBadgeClass,
+} from "@/lib/formatters";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -40,7 +44,11 @@ export default function JobDetailPage() {
       <section>
         <h1>{job.company}</h1>
         <p>{job.title}</p>
-        <p>{formatStatus(job.status)}</p>
+        <span
+          className={`rounded-full px-2 py-1 text-sm font-medium ${getStatusBadgeClass(job.status)}`}
+        >
+          {formatStatus(job.status)}
+        </span>
       </section>
       <section>
         <p>{job.description || "No description added yet."}</p>

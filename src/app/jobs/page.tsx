@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { mockJobs } from "@/lib/mockJobs";
-import { formatStatus } from "@/lib/formatters";
+import { formatStatus, getStatusBadgeClass } from "@/lib/formatters";
 import { JobStatus } from "@/types/job";
 import type { Job } from "@/types/job";
 
@@ -106,7 +106,11 @@ export default function JobsPage() {
           <Link href={`/jobs/${job.id}`}>
             <h2>{job.company}</h2>
             <p>{job.title}</p>
-            <p>{formatStatus(job.status)}</p>
+            <span
+              className={`rounded-full px-2 py-1 text-sm font-medium ${getStatusBadgeClass(job.status)}`}
+            >
+              {formatStatus(job.status)}
+            </span>
           </Link>
           <select
             value={job.status}
