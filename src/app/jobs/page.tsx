@@ -39,11 +39,11 @@ export default function JobsPage() {
 
   function addNewJob(e: any) {
     e.preventDefault();
-    if (!company || !title) return;
+    if (!company.trim() || !title.trim()) return;
     const newJob = {
       id: crypto.randomUUID(),
-      company: company,
-      title: title,
+      company: company.trim(),
+      title: title.trim(),
       location: "",
       status: status,
       description: "",
@@ -101,32 +101,39 @@ export default function JobsPage() {
         <button type="submit">Add Job</button>
       </form>
       <input value={query} onChange={(e) => setQuery(e.target.value)} />
-      {filteredJobs.map((job) => (
-        <div key={job.id}>
-          <Link href={`/jobs/${job.id}`}>
-            <h2>{job.company}</h2>
-            <p>{job.title}</p>
-            <span
-              className={`rounded-full px-2 py-1 text-sm font-medium ${getStatusBadgeClass(job.status)}`}
+
+      {jobs.length === 0 ? (
+        <p>No jobs yet. Add your first job above.</p>
+      ) : filteredJobs.length === 0 ? (
+        <p>No matching jobs found.</p>
+      ) : (
+        filteredJobs.map((job) => (
+          <div key={job.id}>
+            <Link href={`/jobs/${job.id}`}>
+              <h2>{job.company}</h2>
+              <p>{job.title}</p>
+              <span
+                className={`rounded-full px-2 py-1 text-sm font-medium ${getStatusBadgeClass(job.status)}`}
+              >
+                {formatStatus(job.status)}
+              </span>
+            </Link>
+            <select
+              value={job.status}
+              onChange={(e) =>
+                updateJobStatus(job.id, e.target.value as JobStatus)
+              }
             >
-              {formatStatus(job.status)}
-            </span>
-          </Link>
-          <select
-            value={job.status}
-            onChange={(e) =>
-              updateJobStatus(job.id, e.target.value as JobStatus)
-            }
-          >
-            <option value="saved">Saved</option>
-            <option value="applied">Applied</option>
-            <option value="interviewing">Interviewing</option>
-            <option value="offer">Offer</option>
-            <option value="rejected">Rejected</option>
-          </select>
-          <button onClick={() => deleteJob(job.id)}>Delete</button>
-        </div>
-      ))}
+              <option value="saved">Saved</option>
+              <option value="applied">Applied</option>
+              <option value="interviewing">Interviewing</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <button onClick={() => deleteJob(job.id)}>Delete</button>
+          </div>
+        ))
+      )}
     </main>
   );
 }
