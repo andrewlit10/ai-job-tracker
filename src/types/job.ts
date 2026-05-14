@@ -14,4 +14,5 @@ export type Job = {
   description: string;
   notes?: string;
   createdAt: string;
+  followUpMessage?: string;
 };

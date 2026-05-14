@@ -93,7 +93,25 @@ export default function JobDetailPage() {
     localStorage.setItem("jobs", JSON.stringify(updatedJobs));
     setIsEditing(false);
   }
+  function generateFollowUpMessage(jobToUse: Job) {
+    const message = `Hi ${jobToUse.company} team,
 
+I wanted to follow up on my application for the ${jobToUse.title} role. I'm still very interested in the opportunity and would appreciate any updates when available.
+
+Best,
+Andrew`;
+    const updatedJobs = jobs.map((currentJob) => {
+      if (currentJob.id === id) {
+        return {
+          ...currentJob,
+          followUpMessage: message,
+        };
+      }
+      return currentJob;
+    });
+    setJobs(updatedJobs);
+    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
+  }
   return (
     <main className={pageClass}>
       <div className="mx-auto max-w-2xl">
@@ -211,6 +229,30 @@ export default function JobDetailPage() {
                   {formatDate(job.createdAt)}
                 </p>
               </div>
+            </section>
+            <section className={`${cardClass} mt-4`}>
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <h2 className="text-lg font-semibold text-slate-900">
+                  AI Follow-Up Message
+                </h2>
+
+                <button
+                  className={primaryButtonClass}
+                  onClick={() => generateFollowUpMessage(job)}
+                >
+                  Generate
+                </button>
+              </div>
+
+              {job.followUpMessage ? (
+                <p className="whitespace-pre-wrap text-slate-700">
+                  {job.followUpMessage}
+                </p>
+              ) : (
+                <p className="text-slate-500">
+                  Generate a follow-up message for this job.
+                </p>
+              )}
             </section>
           </>
         )}
