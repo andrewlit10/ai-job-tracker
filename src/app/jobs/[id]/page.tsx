@@ -21,6 +21,8 @@ export default function JobDetailPage() {
   const [editLocation, setEditLocation] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editStatus, setEditStatus] = useState<JobStatus>("saved");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [followUpError, setFollowUpError] = useState("");
 
   useEffect(() => {
     const savedJobs = localStorage.getItem("jobs");
@@ -93,24 +95,42 @@ export default function JobDetailPage() {
     localStorage.setItem("jobs", JSON.stringify(updatedJobs));
     setIsEditing(false);
   }
-  function generateFollowUpMessage(jobToUse: Job) {
-    const message = `Hi ${jobToUse.company} team,
-
-I wanted to follow up on my application for the ${jobToUse.title} role. I'm still very interested in the opportunity and would appreciate any updates when available.
-
-Best,
-Andrew`;
-    const updatedJobs = jobs.map((currentJob) => {
-      if (currentJob.id === id) {
-        return {
-          ...currentJob,
-          followUpMessage: message,
-        };
+  async function generateFollowUpMessage(jobToUse: Job) {
+    setIsGenerating(true);
+    setFollowUpError("");
+    try {
+      const response = await fetch("/api/generate-followup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          company: jobToUse.company,
+          title: jobToUse.title,
+          status: jobToUse.status,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to generate follow-up message");
       }
-      return currentJob;
-    });
-    setJobs(updatedJobs);
-    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
+      const data = await response.json();
+
+      const updatedJobs = jobs.map((currentJob) => {
+        if (currentJob.id === jobToUse.id) {
+          return {
+            ...currentJob,
+            followUpMessage: data.message,
+          };
+        }
+        return currentJob;
+      });
+      setJobs(updatedJobs);
+      localStorage.setItem("jobs", JSON.stringify(updatedJobs));
+    } catch {
+      setFollowUpError("Something went wrong. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
   }
   return (
     <main className={pageClass}>
@@ -239,11 +259,15 @@ Andrew`;
                 <button
                   className={primaryButtonClass}
                   onClick={() => generateFollowUpMessage(job)}
+                  disabled={isGenerating}
                 >
-                  Generate
+                  {isGenerating ? "Generating..." : "Generate"}
                 </button>
               </div>
 
+              {followUpError && (
+                <p className="mb-3 text-sm text-red-600">{followUpError}</p>
+              )}
               {job.followUpMessage ? (
                 <p className="whitespace-pre-wrap text-slate-700">
                   {job.followUpMessage}
