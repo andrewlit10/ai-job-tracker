@@ -45,7 +45,13 @@ export default function JobDetailPage() {
   const secondaryButtonClass =
     "rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100";
   if (!hasLoaded) {
-    return <main className={pageClass}>Loading...</main>;
+    return (
+      <main className={pageClass}>
+        <div className="mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-slate-600">Loading job details...</p>
+        </div>
+      </main>
+    );
   }
 
   if (!job) {
