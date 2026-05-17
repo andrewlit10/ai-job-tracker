@@ -88,7 +88,13 @@ export default function JobsPage() {
   const dangerButtonClass =
     "rounded-lg bg-red-600 px-3 py-2 text-white hover:bg-red-700";
   if (!hasLoaded) {
-    return <main className={pageClass}>Loading...</main>;
+    return (
+      <main className={pageClass}>
+        <div className="mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-slate-600">Loading jobs...</p>
+        </div>
+      </main>
+    );
   }
   return (
     <main className={pageClass}>
