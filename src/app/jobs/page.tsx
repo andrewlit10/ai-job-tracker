@@ -40,7 +40,8 @@ export default function JobsPage() {
   const filteredJobs = jobs.filter(
     (job) =>
       job.title.toLowerCase().includes(normalizedQuery) ||
-      job.company.toLowerCase().includes(normalizedQuery),
+      job.company.toLowerCase().includes(normalizedQuery) ||
+      job.status.toLowerCase().includes(normalizedQuery),
   );
 
   function addNewJob(e: any) {
