@@ -4,14 +4,10 @@ import { mockJobs } from "@/lib/mockJobs";
 import { JobStatus } from "@/types/job";
 import type { Job } from "@/types/job";
 import { JobCard } from "@/components/JobCard";
+import { JobForm } from "@/components/JobForm";
 
 export default function JobsPage() {
   const [query, setQuery] = useState("");
-  const [company, setCompany] = useState("");
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState<JobStatus>("saved");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -38,25 +34,24 @@ export default function JobsPage() {
       job.status.toLowerCase().includes(normalizedQuery),
   );
 
-  function addNewJob(e: any) {
-    e.preventDefault();
-    if (!company.trim() || !title.trim()) return;
-    const newJob = {
+  function addNewJob(formData: {
+    company: string;
+    title: string;
+    location: string;
+    description: string;
+    status: JobStatus;
+  }) {
+    const newJob: Job = {
       id: crypto.randomUUID(),
-      company: company.trim(),
-      title: title.trim(),
-      location: location.trim(),
-      description: description.trim(),
-      status: status,
+      company: formData.company,
+      title: formData.title,
+      location: formData.location,
+      description: formData.description,
+      status: formData.status,
       createdAt: new Date().toISOString(),
     };
 
     setJobs([newJob, ...jobs]);
-    setCompany("");
-    setTitle("");
-    setLocation("");
-    setDescription("");
-    setStatus("saved");
   }
   function deleteJob(id: string) {
     const shouldDelete = confirm("Are you sure you want to delete this job?");
@@ -77,11 +72,7 @@ export default function JobsPage() {
   const pageClass = "min-h-screen bg-slate-50 px-6 py-8";
   const inputClass =
     "rounded-lg border border-slate-300 px-3 py-2 text-base text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
-  const primaryButtonClass =
-    "rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700";
 
-  const dangerButtonClass =
-    "rounded-lg bg-red-600 px-3 py-2 text-white hover:bg-red-700";
   if (!hasLoaded) {
     return (
       <main className={pageClass}>
@@ -97,49 +88,7 @@ export default function JobsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">AI Job Tracker</h1>
         </div>
-        <form
-          onSubmit={addNewJob}
-          className="mb-8 grid gap-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-        >
-          <input
-            className={inputClass}
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            placeholder="Company"
-          />
-          <input
-            className={inputClass}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Job Title"
-          />
-          <input
-            className={inputClass}
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Location"
-          />
-          <textarea
-            className={`${inputClass} min-h-24 resize-none`}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Job description"
-          />
-          <select
-            className={inputClass}
-            value={status}
-            onChange={(e) => setStatus(e.target.value as JobStatus)}
-          >
-            <option value="saved">Saved</option>
-            <option value="applied">Applied</option>
-            <option value="interviewing">Interviewing</option>
-            <option value="offer">Offer</option>
-            <option value="rejected">Rejected</option>
-          </select>
-          <button className={primaryButtonClass} type="submit">
-            Add Job
-          </button>
-        </form>
+        <JobForm onAddJob={addNewJob} />
         <input
           className={`mb-4 w-full ${inputClass}`}
           value={query}
