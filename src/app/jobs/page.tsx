@@ -1,15 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import { mockJobs } from "@/lib/mockJobs";
-import {
-  formatStatus,
-  formatDate,
-  getStatusBadgeClass,
-} from "@/lib/formatters";
 import { JobStatus } from "@/types/job";
 import type { Job } from "@/types/job";
-
-import Link from "next/link";
+import { JobCard } from "@/components/JobCard";
 
 export default function JobsPage() {
   const [query, setQuery] = useState("");
@@ -160,59 +154,12 @@ export default function JobsPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             {filteredJobs.map((job) => (
-              <div
+              <JobCard
                 key={job.id}
-                className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-              >
-                <Link href={`/jobs/${job.id}`} className="block">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h2 className="min-h-[3.5rem] text-xl font-semibold leading-tight text-slate-900">
-                        {job.title}
-                      </h2>
-                      <p className="mt-1 text-base text-slate-700">
-                        {job.company}
-                      </p>
-                    </div>
-
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-1 text-xs font-medium ${getStatusBadgeClass(
-                        job.status,
-                      )}`}
-                    >
-                      {formatStatus(job.status)}
-                    </span>
-                  </div>
-
-                  <div className="mt-4 space-y-1 text-sm text-slate-500">
-                    <p>{job.location || "No location added"}</p>
-                    <p>Added {formatDate(job.createdAt)}</p>
-                  </div>
-                </Link>
-
-                <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <select
-                    className={`${inputClass} max-w-[180px]`}
-                    value={job.status}
-                    onChange={(e) =>
-                      updateJobStatus(job.id, e.target.value as JobStatus)
-                    }
-                  >
-                    <option value="saved">Saved</option>
-                    <option value="applied">Applied</option>
-                    <option value="interviewing">Interviewing</option>
-                    <option value="offer">Offer</option>
-                    <option value="rejected">Rejected</option>
-                  </select>
-
-                  <button
-                    className={dangerButtonClass}
-                    onClick={() => deleteJob(job.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+                job={job}
+                onDelete={deleteJob}
+                onStatusChange={updateJobStatus}
+              />
             ))}
           </div>
         )}
